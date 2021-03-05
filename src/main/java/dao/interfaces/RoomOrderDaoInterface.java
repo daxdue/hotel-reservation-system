@@ -3,15 +3,16 @@ package dao.interfaces;
 import enums.RoomClass;
 import models.RoomOrder;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public interface RoomOrderDaoInterface extends CrudInterface<RoomOrder, Long> {
-
+    void updateRoom(RoomOrder roomOrder);
     List<RoomOrder> getRoomOrders();
     List<RoomOrder> getRoomOrderByRoomClass(RoomClass roomClass);
     List<RoomOrder> getRoomOrderByNumberOfBeds(int numberOfBeds);
-    List<RoomOrder> getRoomOrderByCheckin(Date date);
-    List<RoomOrder> getRoomOrderByCheckout(Date date);
+    List<RoomOrder> getRoomOrderByCheckin(Date checkin);
+    List<RoomOrder> getRoomOrderByCheckout(Date checkout);
     List<RoomOrder> getRoomOrdersByCheckinAndCheckout(Date checkin, Date checkout);
+    List<RoomOrder> getRoomOrdersByClient(Long clientId);
 }

@@ -4,14 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {
 
-    private int id;
+    private Long id;
     private String login;
     private String firstName;
     private String lastName;
-    private String password;
+    private List<RoomOrder> roomOrders;
+
+    public Client(Long id, String login, String firstName, String lastName) {
+        this.id = id;
+        this.login = login;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }
