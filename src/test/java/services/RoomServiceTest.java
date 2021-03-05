@@ -1,5 +1,7 @@
 package services;
 
+import dao.implementations.RoomDaoPostgres;
+import dao.interfaces.RoomDaoInterface;
 import enums.RoomClass;
 import enums.RoomStatus;
 import models.Room;
@@ -19,7 +21,6 @@ public class RoomServiceTest {
 
     @BeforeTest
     public void setUp() {
-        roomService = Mockito.mock(RoomService.class);
         testRoom = new Room();
         testRoom.setId(Long.valueOf(1));
         testRoom.setNumberOfBeds(2);
@@ -33,29 +34,39 @@ public class RoomServiceTest {
         testRooms.add(room1);
         testRooms.add(room2);
         testRooms.add(room3);
+
+        RoomDaoInterface roomDao = Mockito.mock(RoomDaoPostgres.class);
+        roomService = new RoomService(roomDao);
+        Mockito.when(roomDao.get(Mockito.anyLong())).thenReturn(testRoom);
+        Mockito.when(roomDao.getRooms()).thenReturn(testRooms);
+        Mockito.when(roomDao.getRoomsByStatus(Mockito.any(RoomStatus.class))).thenReturn(testRooms);
+        Mockito.when(roomDao.getRoomsByNumberOfBeds(Mockito.anyInt())).thenReturn(testRooms);
+        Mockito.when(roomDao.getRoomsByClass(Mockito.any(RoomClass.class))).thenReturn(testRooms);
+
     }
 
     @Test
     public void roomServiceCanFindRoomById() {
-        Mockito.when(roomService.findRoom(Long.valueOf(1))).thenReturn(testRoom);
         Assert.assertEquals(testRoom, roomService.findRoom(Long.valueOf(1)));
     }
 
     @Test
     public void roomServiceCanFindAllRooms() {
-        Mockito.when(roomService.findAllRooms()).thenReturn(testRooms);
         Assert.assertEquals(testRooms, roomService.findAllRooms());
     }
 
     @Test
     public void roomServiceCanFindRoomsByStatus() {
-        Mockito.when(roomService.findRoomsByStatus(RoomStatus.OCCUPIED)).thenReturn(testRooms);
         Assert.assertEquals(testRooms, roomService.findRoomsByStatus(RoomStatus.OCCUPIED));
     }
 
     @Test
     public void roomServiceCanFindRoomsByNumberOfBeds() {
-        Mockito.when(roomService.findRoomsByNumberOfBeds(2)).thenReturn(testRooms);
         Assert.assertEquals(testRooms, roomService.findRoomsByNumberOfBeds(2));
+    }
+
+    @Test
+    public void roomServiceCanFindRoomsByRoomClass() {
+        Assert.assertEquals(testRooms, roomService.findRoomsByClass(RoomClass.LUXE));
     }
 }

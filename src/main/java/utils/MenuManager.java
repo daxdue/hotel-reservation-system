@@ -1,10 +1,11 @@
 package utils;
 
 import com.sun.tools.corba.se.idl.constExpr.Not;
-import enums.HintType;
-import enums.OrderStatus;
-import enums.RoomClass;
-import enums.RoomStatus;
+import dao.implementations.ClientDaoPostgres;
+import dao.implementations.ConnectionFactory;
+import dao.implementations.RoomDaoPostgres;
+import dao.implementations.RoomOrderDaoPostgres;
+import enums.*;
 import exceptions.AlreadyExistsException;
 import exceptions.NotFoundException;
 import exceptions.UnknownCommand;
@@ -166,9 +167,13 @@ public class MenuManager {
 
 
     public static void runProcess() {
-        ClientService clientService = new ClientService();
-        RoomService roomService = new RoomService();
-        RoomOrderService roomOrderService = new RoomOrderService();
+
+        ClientService clientService = new ClientService(
+                new ClientDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES)));
+        RoomService roomService = new RoomService(
+                new RoomDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES)));
+        RoomOrderService roomOrderService = new RoomOrderService(
+                new RoomOrderDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES)));
 
         boolean exit = false;
         Scanner input = new Scanner(System.in);

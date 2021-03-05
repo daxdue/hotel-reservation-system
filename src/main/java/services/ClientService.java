@@ -14,7 +14,8 @@ public class ClientService {
 
     private ClientDaoInterface clientDao;
 
-    public ClientService() {
+    public ClientService(ClientDaoInterface clientDao) {
+        this.clientDao = clientDao;
         clientDao = new ClientDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES));
     }
 

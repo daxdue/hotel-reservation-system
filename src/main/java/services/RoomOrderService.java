@@ -1,11 +1,8 @@
 package services;
 
-import dao.implementations.ConnectionFactory;
-import dao.implementations.RoomOrderDaoPostgres;
 import dao.interfaces.RoomOrderDaoInterface;
 import enums.OrderStatus;
 import enums.RoomClass;
-import enums.SourceType;
 import exceptions.NotFoundException;
 import models.Client;
 import models.RoomOrder;
@@ -18,8 +15,8 @@ public class RoomOrderService {
 
     private RoomOrderDaoInterface roomOrderDao;
 
-    public RoomOrderService() {
-        roomOrderDao = new RoomOrderDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES));
+    public RoomOrderService(RoomOrderDaoInterface roomOrderDao) {
+        this.roomOrderDao = roomOrderDao;
     }
 
     public RoomOrder findRoomOrder(Long id) {

@@ -1,11 +1,14 @@
 package services;
 
+import dao.implementations.RoomOrderDaoPostgres;
+import dao.interfaces.RoomOrderDaoInterface;
 import enums.OrderStatus;
 import enums.RoomClass;
 import enums.RoomStatus;
 import models.Client;
 import models.Room;
 import models.RoomOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -28,7 +31,6 @@ public class RoomOrderServiceTest {
     public void setUp() {
         checkin = DateValidator.currentDate();
         checkout = DateValidator.currentDate();
-        roomOrderService = Mockito.mock(RoomOrderService.class);
         testRoomOrder = new RoomOrder();
         testRoomOrder.setId(Long.valueOf(1));
         testRoomOrder.setRoom(new Room(Long.valueOf(1), 2, RoomClass.LUXE, RoomStatus.OCCUPIED));
@@ -40,49 +42,54 @@ public class RoomOrderServiceTest {
         testRoomOrder.setClient(new Client(Long.valueOf(1), "fedorov", "Fedor", "Fedorov"));
         testRoomOrders = new ArrayList<>();
         testRoomOrders.add(testRoomOrder);
+
+        RoomOrderDaoInterface roomOrderDao = Mockito.mock(RoomOrderDaoPostgres.class);
+        roomOrderService = new RoomOrderService(roomOrderDao);
+        Mockito.when(roomOrderDao.get(Mockito.anyLong())).thenReturn(testRoomOrder);
+        Mockito.when(roomOrderDao.getRoomOrders()).thenReturn(testRoomOrders);
+        Mockito.when(roomOrderDao.getRoomOrderByRoomClass(Mockito.any(RoomClass.class))).thenReturn(testRoomOrders);
+        Mockito.when(roomOrderDao.getRoomOrderByNumberOfBeds(Mockito.anyInt())).thenReturn(testRoomOrders);
+        Mockito.when(roomOrderDao.getRoomOrderByCheckin(Mockito.any(Date.class))).thenReturn(testRoomOrders);
+        Mockito.when(roomOrderDao.getRoomOrderByCheckout(Mockito.any(Date.class))).thenReturn(testRoomOrders);
+        Mockito.when(roomOrderDao.getRoomOrdersByCheckinAndCheckout(
+                Mockito.any(Date.class), Mockito.any(Date.class)
+        )).thenReturn(testRoomOrders);
+
+
     }
 
     @Test
     public void roomOrderServiceCanFindRoomOrderById() {
-        Mockito.when(roomOrderService.findRoomOrder(Long.valueOf(1))).thenReturn(testRoomOrder);
         Assert.assertEquals(testRoomOrder, roomOrderService.findRoomOrder(Long.valueOf(1)));
     }
 
     @Test
     public void roomOrderServiceCanFindAllOrders() {
-        Mockito.when(roomOrderService.findAllOrders()).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findAllOrders());
     }
 
     @Test
     public void roomOrderCanFindRoomOrdersByRoomClass() {
-        Mockito.when(roomOrderService.findRoomOrdersByRoomClass(RoomClass.LUXE)).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findRoomOrdersByRoomClass(RoomClass.LUXE));
     }
 
     @Test
     public void roomOrderServiceCanFindRoomOrdersByNumberOfBeds() {
-        Mockito.when(roomOrderService.findRoomOrdersByNumberOfBeds(2)).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findRoomOrdersByNumberOfBeds(2));
     }
 
     @Test
     public void roomOrderServiceCanFindRoomOrdersByCheckin() {
-        Mockito.when(roomOrderService.findRoomOrdersByCheckin(checkin)).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findRoomOrdersByCheckin(checkin));
     }
 
     @Test
     public void roomOrderServiceCanFindRoomOrdersByCheckout() {
-        Mockito.when(roomOrderService.findRoomOrdersByCheckout(checkout)).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findRoomOrdersByCheckout(checkout));
     }
 
     @Test
     public void roomOrderServiceCanFindRoomOrdersByCheckinAndCheckout(){
-
-        Mockito.when(roomOrderService.findRoomOrdersByCheckinAndCheckout(checkin,
-                checkout)).thenReturn(testRoomOrders);
         Assert.assertEquals(testRoomOrders, roomOrderService.findRoomOrdersByCheckinAndCheckout(checkin,
                 checkout));
     }

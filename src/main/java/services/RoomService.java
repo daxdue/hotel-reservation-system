@@ -1,11 +1,8 @@
 package services;
 
-import dao.implementations.ConnectionFactory;
-import dao.implementations.RoomDaoPostgres;
 import dao.interfaces.RoomDaoInterface;
 import enums.RoomClass;
 import enums.RoomStatus;
-import enums.SourceType;
 import exceptions.NotFoundException;
 import models.Room;
 
@@ -15,8 +12,8 @@ public class RoomService {
 
     private RoomDaoInterface roomDao;
 
-    public RoomService() {
-        roomDao = new RoomDaoPostgres(ConnectionFactory.getConnection(SourceType.POSTGRES));
+    public RoomService(RoomDaoInterface roomDao) {
+        this.roomDao = roomDao;
     }
 
     public Room findRoom(Long id) {
